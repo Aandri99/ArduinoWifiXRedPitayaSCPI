@@ -5,10 +5,8 @@
    - fire generator INT trigger to produce the edge
 */
 #include "wifiSCPI.h"
-#include "arduino_secrets.h"
+#include "arduino_secrets.h"   // WiFi + Red Pitaya settings
 
-IPAddress RP_IP(192,168,0,17);
-const uint16_t RP_PORT = 5000;
 
 WifiSCPI rp;
 
@@ -21,7 +19,7 @@ void printFirst(const String& blk, uint8_t n=12){
 
 void setup(){
   Serial.begin(115200); delay(200);
-  if(!rp.begin(SECRET_SSID, SECRET_PASS, RP_IP, RP_PORT)){
+  if(!rp.begin(SECRET_SSID, SECRET_PASS, SECRET_RP_IP, SECRET_RP_PORT)){
     Serial.println(F("Failed to connect"));
     while(true){}
   }
