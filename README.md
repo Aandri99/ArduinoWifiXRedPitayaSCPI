@@ -1,6 +1,11 @@
 # SCPI red pitaya library
 [![Build Status](https://github.com/RedPitaya/SCPI-red-pitaya-arduino/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/RedPitaya/SCPI-red-pitaya-arduino/actions)
 
+#Wifi Update
+wifiSCPI.h / wifiSCPI.cpp provide a small class that joins a Wi-Fi network, opens a TCP connection to the Red Pitaya SCPI server and exposes helpers for sending commands.
+
+Each example folder demonstrates a different Red Pitaya feature while leveraging this helper for network setup and SCPI communication.
+
 ## Description
 
 Arduino library for controlling Red Pitaya boards via SCPI server.
