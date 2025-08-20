@@ -6,12 +6,10 @@
 
 #include "wifiSCPI.h"
 #include <math.h>
-#include "arduino_secrets.h"   // SECRET_SSID, SECRET_PASS
+#include "arduino_secrets.h"   // WiFi + Red Pitaya settings
 
 /************ User Config ************/
 // Red Pitaya SCPI server
-IPAddress RP_IP(192, 168, 0, 17);
-const uint16_t RP_PORT = 5000;
 
 // ARB buffer size (use 2048 for speed; 16384 is the full period size)
 int   ARB_NPTS     = 2048;
@@ -87,7 +85,7 @@ void setup() {
   Serial.begin(115200);
   delay(150);
 
-  if(!rp.begin(SECRET_SSID, SECRET_PASS, RP_IP, RP_PORT)){
+  if(!rp.begin(SECRET_SSID, SECRET_PASS, SECRET_RP_IP, SECRET_RP_PORT)){
     Serial.println(F("Failed to connect"));
     while(true){}
   }
@@ -102,7 +100,7 @@ void loop() {
   // Keep the link healthy (optional)
   if (WiFi.status() != WL_CONNECTED) rp.connectWiFi(SECRET_SSID, SECRET_PASS);
   if (!rp.connected()) {
-    if (rp.connectRP(RP_IP, RP_PORT)) uploadSum3SinesOut1(ARB_NPTS); // re-arm after reconnect
+    if (rp.connectRP(SECRET_RP_IP, SECRET_RP_PORT)) uploadSum3SinesOut1(ARB_NPTS); // re-arm after reconnect
   }
   delay(500);
 }

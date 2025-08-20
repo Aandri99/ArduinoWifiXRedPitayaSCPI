@@ -3,11 +3,9 @@
 */
 
 #include "wifiSCPI.h"
-#include "arduino_secrets.h"   // SECRET_SSID, SECRET_PASS
+#include "arduino_secrets.h"   // WiFi + Red Pitaya settings
 
 // ---------- User config ----------
-IPAddress RP_IP(192, 168, 0, 17);  // <-- your Red Pitaya IP
-const uint16_t RP_PORT = 5000;     // SCPI server port
 
 // Sine parameters
 const float SINE_FREQ_HZ = 2000.0; // frequency
@@ -32,7 +30,7 @@ void setup() {
   Serial.begin(115200);
   delay(150);
 
-  if(!rp.begin(SECRET_SSID, SECRET_PASS, RP_IP, RP_PORT)){
+  if(!rp.begin(SECRET_SSID, SECRET_PASS, SECRET_RP_IP, SECRET_RP_PORT)){
     Serial.println(F("Failed to connect"));
     while(true){}
   }
@@ -45,7 +43,7 @@ void setup() {
 void loop() {
   // Keep connection alive (optional)
   if (WiFi.status() != WL_CONNECTED) rp.connectWiFi(SECRET_SSID, SECRET_PASS);
-  if (!rp.connected()) rp.connectRP(RP_IP, RP_PORT);
+  if (!rp.connected()) rp.connectRP(SECRET_RP_IP, SECRET_RP_PORT);
   delay(500);
 }
 

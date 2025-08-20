@@ -1,4 +1,4 @@
-#define SECRET_SSID "Pokemoni"
-#define SECRET_PASS "kotejebe123"
-#define SECRET_RP_IP IPAddress(192, 168, 0, 17)
+#define SECRET_SSID "NetworkName"
+#define SECRET_PASS "Password"
+#define SECRET_RP_IP IPAddress(x, x, x, x)
 #define SECRET_RP_PORT 5000

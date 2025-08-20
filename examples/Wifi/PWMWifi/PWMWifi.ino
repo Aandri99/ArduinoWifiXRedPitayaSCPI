@@ -1,12 +1,10 @@
 #include <WiFiS3.h>
 #include "SCPI_RP.h"
 #include "SCPI_WiFi.h"
-#include "arduino_secrets.h"
+#include "arduino_secrets.h"   // WiFi + Red Pitaya settings
 
 // ------- User config -------
 #define USE_STATIC_IP  1
-IPAddress RP_IP(192, 168, 0, 17);
-const uint16_t RP_PORT = 5000;
 
 const float GEN_FREQ_HZ   = 2000.0;
 const float GEN_AMPL_V    = 1.0;
@@ -47,7 +45,7 @@ void setup() {
   }
   Serial.print("✅ WiFi OK, IP = "); Serial.println(net.localIP());
 
-  if (!net.connectRP(RP_IP, RP_PORT)) {
+  if (!net.connectRP(SECRET_RP_IP, SECRET_RP_PORT)) {
     Serial.println("❌ TCP connect failed (will retry in loop)");
   } else {
     Serial.println("✅ TCP connected");
@@ -65,7 +63,7 @@ void loop() {
 #if USE_STATIC_IP
     cfg.useStaticIP = true; cfg.localIP = LOCAL_IP; cfg.gateway = GATEWAY; cfg.subnet = SUBNET; cfg.dns = DNS;
 #endif
-    if (net.ensureConnections(SECRET_SSID, SECRET_PASS, RP_IP, RP_PORT, &cfg)) {
+    if (net.ensureConnections(SECRET_SSID, SECRET_PASS, SECRET_RP_IP, SECRET_RP_PORT, &cfg)) {
       net.bind(rp);                 // re-bind after reconnect
       rpReady = true;
       // optionally re-start generator

@@ -5,10 +5,8 @@
 
 #include "wifiSCPI.h"
 #include <math.h>
-#include "arduino_secrets.h"
+#include "arduino_secrets.h"   // WiFi + Red Pitaya settings
 
-IPAddress RP_IP(192, 168, 0, 17);
-const uint16_t RP_PORT = 5000;
 
 int   ARB_NPTS     = 2048;
 float F0_HZ        = 1000.0;
@@ -59,7 +57,7 @@ bool uploadSum3SinesOut1(int N) {
 void setup() {
   Serial.begin(115200);
   delay(150);
-  if(!rp.begin(SECRET_SSID, SECRET_PASS, RP_IP, RP_PORT)) {
+  if(!rp.begin(SECRET_SSID, SECRET_PASS, SECRET_RP_IP, SECRET_RP_PORT)) {
     Serial.println(F("Failed to connect"));
     while(true){}
   }
@@ -70,7 +68,7 @@ void setup() {
 void loop() {
   if (WiFi.status() != WL_CONNECTED) rp.connectWiFi(SECRET_SSID, SECRET_PASS);
   if (!rp.connected()) {
-    if (rp.connectRP(RP_IP, RP_PORT)) uploadSum3SinesOut1(ARB_NPTS);
+    if (rp.connectRP(SECRET_RP_IP, SECRET_RP_PORT)) uploadSum3SinesOut1(ARB_NPTS);
   }
   delay(500);
 }
