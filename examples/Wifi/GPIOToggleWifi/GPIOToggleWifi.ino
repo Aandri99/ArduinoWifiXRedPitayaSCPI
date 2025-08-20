@@ -1,50 +1,39 @@
 #include "wifiSCPI.h"
-#include "arduino_secrets.h"  // SECRET_SSID, SECRET_PASS
-
-// ---------- User config ----------
-IPAddress RP_IP(192, 168, 0, 17);    // Red Pitaya IP
-const uint16_t RP_PORT = 5000;       // SCPI TCP port
-// ---------------------------------
+#include "arduino_secrets.h"   // WiFi + Red Pitaya settings
 
 WifiSCPI rp;
 
-// --- GPIO pins ---
-const char* OUT_PIN = "DIO0_P";
-const char* IN_PIN  = "DIO1_P";
-
 void setup() {
   Serial.begin(115200);
-  delay(150);
 
-  if(!rp.begin(SECRET_SSID, SECRET_PASS, RP_IP, RP_PORT)){
-    Serial.println(F("Failed to connect"));
-    while(true){}
-  }
+  // Connect to WiFi and Red Pitaya
+  rp.begin(SECRET_SSID, SECRET_PASS, SECRET_RP_IP, SECRET_RP_PORT);
 
-  rp.scpi(String("DIG:PIN:DIR OUT,") + OUT_PIN);
-  rp.scpi(String("DIG:PIN:DIR IN,")  + IN_PIN);
+  // Configure DIO0_P as OUTPUT
+  rp.scpi("DIG:PIN:DIR DIO0_P,OUT");
 
-  Serial.print(OUT_PIN); Serial.print(" dir="); Serial.println(rp.scpiLine(String("DIG:PIN:DIR? ")+OUT_PIN));
-  Serial.print(IN_PIN);  Serial.print(" dir="); Serial.println(rp.scpiLine(String("DIG:PIN:DIR? ")+IN_PIN));
+  // Configure DIO1_P as INPUT
+  rp.scpi("DIG:PIN:DIR DIO1_P,IN");
+
+  Serial.println("Setup done. Toggling DIO0_P and reading DIO1_P...");
 }
 
 void loop() {
-  if (WiFi.status() != WL_CONNECTED) rp.connectWiFi(SECRET_SSID, SECRET_PASS);
-  if (!rp.connected()) {
-    if (rp.connectRP(RP_IP, RP_PORT)) {
-      rp.scpi(String("DIG:PIN:DIR OUT,") + OUT_PIN);
-      rp.scpi(String("DIG:PIN:DIR IN,")  + IN_PIN);
-    }
-  }
-  if (!rp.connected()) { delay(200); return; }
+  // ---- Write HIGH on DIO0_P ----
+  rp.scpi("DIG:PIN DIO0_P,1");
+  delay(500);
 
-  static bool level = false;
-  rp.scpi(String("DIG:PIN ") + OUT_PIN + "," + (level ? "1" : "0"));
-  level = !level;
+  // ---- Read DIO1_P ----
+  String state = rp.scpiQuery("DIG:PIN? DIO1_P");
+  Serial.print("DIO1_P reads: ");
+  Serial.println(state);
 
-  String v = rp.scpiLine(String("DIG:PIN? ") + IN_PIN);
-  Serial.print(IN_PIN); Serial.print(" = "); Serial.println(v);
+  // ---- Write LOW on DIO0_P ----
+  rp.scpi("DIG:PIN DIO0_P,0");
+  delay(500);
 
-  delay(200);
+  // ---- Read again ----
+  state = rp.scpiQuery("DIG:PIN? DIO1_P");
+  Serial.print("DIO1_P reads: ");
+  Serial.println(state);
 }
-
